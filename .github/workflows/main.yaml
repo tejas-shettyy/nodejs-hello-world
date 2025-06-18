@@ -17,17 +17,25 @@ jobs: #<-- start the jobs encapsulation
         run: npm ci
       - name: build
         run: npm run build
-      - name: Deploy the application
-        run: npm run deploy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      - name: Archive npm fail logs
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: npm-logs
-          path: ~/.npm/_logs
-        
-    #<-- end of steps encapsulation within 'build' job
+      #<-- end of steps encapsulation within 'build' job
   #<--end of 'build' job encapulation
-#end of job encpsulation
+ #end of job encpsulation
+  test:
+     needs: build
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 14
+      - name: Run install
+        run: npm install
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+     
+       
 
